@@ -11,7 +11,7 @@ class Charge(BaseModel):
     Domain entity for a simulated charge.
     """
     id: str | None = None
-    client_id: str           # keep string in domain to avoid DB coupling
+    client_id: str
     card_id: str
     amount: float
     attempted_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -19,7 +19,7 @@ class Charge(BaseModel):
     reason_code: str | None = None
     refunded: bool = False
     refunded_at: datetime | None = None
-    request_id: str | None = None  # used for idempotency at the application layer
+    request_id: str | None = None
 
     def refund(self) -> None:
         """

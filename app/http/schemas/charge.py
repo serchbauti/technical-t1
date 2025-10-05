@@ -10,7 +10,7 @@ class ChargeCreate(BaseModel):
     client_id: str
     card_id: str
     amount: float = Field(gt=0)
-    request_id: str | None = None  # optional idempotency key
+    request_id: str | None = None
 
 
 class ChargeOut(BaseModel):

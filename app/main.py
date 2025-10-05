@@ -5,11 +5,12 @@ from app.http.routers import client as client_router
 from app.http.routers import card as card_router
 from app.http.routers import charge as charge_router
 
-app = FastAPI(title="T1 Cobros API (DDD)")
+app = FastAPI(title="T1 Technical Test API")
 
 @app.on_event("startup")
 async def on_startup():
-    # Initialize Mongo + Beanie registering Document models defined in infrastructure/db/models.py
+    # Initialize Mongo + Beanie registering Document 
+    # models defined in infrastructure/db/models.py
     await init_mongo()
 
 # Public routers

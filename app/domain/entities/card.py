@@ -30,7 +30,8 @@ class Card(BaseModel):
     @field_validator("pan_masked")
     @classmethod
     def validate_pan_masked(cls, v: str, info):
-        # Simple rules: at least 12 chars, ends with last4 and previous chars must not contain visible digits
+        # Simple rules: at least 12 chars, ends with last4 and previous 
+        # chars must not contain visible digits
         if len(v) < 12:
             raise ValueError("pan_masked must have a minimum length of 12 characters")
         # If last4 is available in validated values, verify consistency
