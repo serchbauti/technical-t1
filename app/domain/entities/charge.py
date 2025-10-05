@@ -11,14 +11,14 @@ class Charge(BaseModel):
     Domain entity for a simulated charge.
     """
     id: str | None = None
-    cliente_id: str           # keep string in domain to avoid DB coupling
-    tarjeta_id: str
-    monto: float
-    fecha_intento: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    client_id: str           # keep string in domain to avoid DB coupling
+    card_id: str
+    amount: float
+    attempted_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     status: ChargeStatus
-    codigo_motivo: str | None = None
-    reembolsado: bool = False
-    fecha_reembolso: datetime | None = None
+    reason_code: str | None = None
+    refunded: bool = False
+    refunded_at: datetime | None = None
     request_id: str | None = None  # used for idempotency at the application layer
 
     def refund(self) -> None:
@@ -27,7 +27,7 @@ class Charge(BaseModel):
         """
         if self.status != ChargeStatus.approved:
             raise ValueError("Only approved charges can be refunded")
-        if self.reembolsado:
+        if self.refunded:
             raise ValueError("Charge is already refunded")
-        self.reembolsado = True
-        self.fecha_reembolso = datetime.now(timezone.utc)
+        self.refunded = True
+        self.refunded_at = datetime.now(timezone.utc)

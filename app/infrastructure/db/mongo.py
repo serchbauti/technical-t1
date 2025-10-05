@@ -5,12 +5,12 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import init_beanie
 
 from app.config import settings
-from app.infrastructure.db.models import ClienteDoc, TarjetaDoc, ChargeDoc
+from app.infrastructure.db.models import ClientDoc, CardDoc, ChargeDoc
 
 _client: Optional[AsyncIOMotorClient] = None
 
 
-async def init_mongo(models: Sequence[type] = (ClienteDoc, TarjetaDoc, ChargeDoc)) -> None:
+async def init_mongo(models: Sequence[type] = (ClientDoc, CardDoc, ChargeDoc)) -> None:
     """
     Create a singleton Motor client and initialize Beanie with the provided Documents.
     The database name should be present in MONGODB_URI (e.g., mongodb://host:27017/t1db).

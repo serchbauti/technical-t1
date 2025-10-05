@@ -13,7 +13,7 @@ from app.domain.entities.charge import Charge, ChargeStatus
 
 
 def _oid_or_none(id_str: Optional[str]) -> Optional[PydanticObjectId]:
-    """Convert a string id to ObjectId when present; otherwise return None."""
+    """Convert string id to ObjectId when present; otherwise return None."""
     if not id_str:
         return None
     return PydanticObjectId(id_str)
@@ -22,23 +22,23 @@ def _oid_or_none(id_str: Optional[str]) -> Optional[PydanticObjectId]:
 # -----------------------------
 # Client
 # -----------------------------
-class ClienteDoc(Document):
-    nombre: str
+class ClientDoc(Document):
+    name: str
     email: Indexed(str, unique=False)  # set unique=True if you want uniqueness
-    telefono: str | None = None
+    phone: str | None = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     class Settings:
-        name = "clientes"
+        name = "clients"
 
     # ---- Mapping helpers
     def to_entity(self) -> Client:
         return Client(
             id=str(self.id),
-            name=self.nombre,
+            name=self.name,
             email=self.email,
-            phone=self.telefono,
+            phone=self.phone,
             created_at=self.created_at,
             updated_at=self.updated_at,
         )
@@ -47,9 +47,9 @@ class ClienteDoc(Document):
     def from_entity(cls, e: Client) -> Self:
         return cls(
             id=_oid_or_none(e.id),
-            nombre=e.name,
+            name=e.name,
             email=e.email,
-            telefono=e.phone,
+            phone=e.phone,
             created_at=e.created_at,
             updated_at=e.updated_at,
         )
@@ -58,8 +58,8 @@ class ClienteDoc(Document):
 # -----------------------------
 # Card
 # -----------------------------
-class TarjetaDoc(Document):
-    cliente_id: Indexed(PydanticObjectId)
+class CardDoc(Document):
+    client_id: Indexed(PydanticObjectId)
     pan_masked: str
     last4: str
     bin: str
@@ -67,14 +67,14 @@ class TarjetaDoc(Document):
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     class Settings:
-        name = "tarjetas"
-        indexes = [IndexModel([("cliente_id", 1)])]
+        name = "cards"
+        indexes = [IndexModel([("client_id", 1)])]
 
     # ---- Mapping helpers
     def to_entity(self) -> Card:
         return Card(
             id=str(self.id),
-            client_id=str(self.cliente_id),
+            client_id=str(self.client_id),
             pan_masked=self.pan_masked,
             last4=self.last4,
             bin=self.bin,
@@ -86,7 +86,7 @@ class TarjetaDoc(Document):
     def from_entity(cls, e: Card) -> Self:
         return cls(
             id=_oid_or_none(e.id),
-            cliente_id=PydanticObjectId(e.client_id),
+            client_id=PydanticObjectId(e.client_id),
             pan_masked=e.pan_masked,
             last4=e.last4,
             bin=e.bin,
@@ -99,21 +99,21 @@ class TarjetaDoc(Document):
 # Charge
 # -----------------------------
 class ChargeDoc(Document):
-    cliente_id: Indexed(PydanticObjectId)
-    tarjeta_id: Indexed(PydanticObjectId)
-    monto: float
-    fecha_intento: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    client_id: Indexed(PydanticObjectId)
+    card_id: Indexed(PydanticObjectId)
+    amount: float
+    attempted_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     status: ChargeStatus
-    codigo_motivo: str | None = None
-    reembolsado: bool = False
-    fecha_reembolso: datetime | None = None
+    reason_code: str | None = None
+    refunded: bool = False
+    refunded_at: datetime | None = None
     # Unique idempotency key when provided; allow None with sparse index
     request_id: Indexed(str) | None = None
 
     class Settings:
-        name = "cobros"
+        name = "charges"
         indexes = [
-            IndexModel([("cliente_id", 1), ("fecha_intento", -1)]),
+            IndexModel([("client_id", 1), ("attempted_at", -1)]),
             IndexModel([("request_id", 1)], unique=True, sparse=True),
         ]
 
@@ -121,14 +121,14 @@ class ChargeDoc(Document):
     def to_entity(self) -> Charge:
         return Charge(
             id=str(self.id),
-            cliente_id=str(self.cliente_id),
-            tarjeta_id=str(self.tarjeta_id),
-            monto=self.monto,
-            fecha_intento=self.fecha_intento,
+            client_id=str(self.client_id),
+            card_id=str(self.card_id),
+            amount=self.amount,
+            attempted_at=self.attempted_at,
             status=self.status,
-            codigo_motivo=self.codigo_motivo,
-            reembolsado=self.reembolsado,
-            fecha_reembolso=self.fecha_reembolso,
+            reason_code=self.reason_code,
+            refunded=self.refunded,
+            refunded_at=self.refunded_at,
             request_id=self.request_id,
         )
 
@@ -136,13 +136,13 @@ class ChargeDoc(Document):
     def from_entity(cls, e: Charge) -> Self:
         return cls(
             id=_oid_or_none(e.id),
-            cliente_id=PydanticObjectId(e.cliente_id),
-            tarjeta_id=PydanticObjectId(e.tarjeta_id),
-            monto=e.monto,
-            fecha_intento=e.fecha_intento,
+            client_id=PydanticObjectId(e.client_id),
+            card_id=PydanticObjectId(e.card_id),
+            amount=e.amount,
+            attempted_at=e.attempted_at,
             status=e.status,
-            codigo_motivo=e.codigo_motivo,
-            reembolsado=e.reembolsado,
-            fecha_reembolso=e.fecha_reembolso,
+            reason_code=e.reason_code,
+            refunded=e.refunded,
+            refunded_at=e.refunded_at,
             request_id=e.request_id,
         )
