@@ -2,7 +2,7 @@
 
 API asincrónica construida con FastAPI para gestionar clientes, tarjetas y cargos dentro de un flujo de pagos de prueba. El proyecto está containerizado, integra MongoDB como base de datos operativa y expone documentación automática vía OpenAPI.
 
-## Alcane
+## Alcance
 - Incluye CRUD de clientes y tarjetas, creación de cargos con historial y reembolsos simulados, además de health-check.
 
 
@@ -49,12 +49,6 @@ postman/           # Colección Postman exportada
 3. **Logs en vivo**: `make logs`.
 4. **Apagar servicios**: `make down`.
 
-## Ejecución Local (sin Docker)
-1. Crear y activar un entorno virtual de Python 3.12.
-2. Instalar dependencias: `pip install -r requirements.txt`.
-3. Exportar `MONGODB_URI` (por ejemplo, a una instancia local de Mongo) y ejecutar:
-   `uvicorn app.main:app --reload`.
-
 ## Documentación y Rutas Clave
 - Documentación OpenAPI: `http://localhost:8000/docs`.
 - Health check: `GET http://localhost:8000/health`.
@@ -72,5 +66,8 @@ postman/           # Colección Postman exportada
 - Dentro de Docker: `make test` (ejecuta `pytest` tras esperar a Mongo).
 - Local sin Docker: asegurarse de tener Mongo disponible y lanzar `pytest`.
 - Suite integrada cubre reglas de Luhn, flujo CRUD de clientes, tarjetas y cargos.
+
+## Contacto
+- Sergio Pérez Bautista — `perez.sergiob@gmail.com`
 
 
