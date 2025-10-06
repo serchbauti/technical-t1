@@ -125,10 +125,6 @@ postman/           # Colección Postman exportada
 
 ---
 
-### `POST /charges` (crear cargo)
-**Headers**
-- `Content-Type: application/json`
-
 ### Request body (schema)
 | Campo        | Tipo    | Req. | Detalle |
 |-------------:|---------|:----:|---------|
