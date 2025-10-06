@@ -1,0 +1,378 @@
+{
+	"info": {
+		"_postman_id": "4a5be9b1-beef-4d85-a49c-bdd6eaeb691f",
+		"name": "T1 Technical API",
+		"description": "Colección de la prueba tecnica desarrollada para t1.\n\nIncluye endpoints de Health, Clients, Cards y Charges.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10016206",
+		"_collection_link": "https://enviaya-5451.postman.co/workspace/enviaya-Workspace~4b18f757-2886-42d2-8547-cef8476471b0/collection/10016206-4a5be9b1-beef-4d85-a49c-bdd6eaeb691f?action=share&source=collection_link&creator=10016206"
+	},
+	"item": [
+		{
+			"name": "Health",
+			"item": [
+				{
+					"name": "GET /health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000"
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints de verificación del servicio."
+		},
+		{
+			"name": "Clients",
+			"item": [
+				{
+					"name": "POST /clients (Create Client)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 201', function () {",
+									"  pm.response.to.have.status(201);",
+									"});",
+									"var json = pm.response.json();",
+									"if (json && json.id) { pm.environment.set('clientId', json.id); }"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Sergio\",\n  \"email\": \"sergio@example.com\",\n  \"phone\": \"5551234567\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000"
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /clients/:id (Get Client)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/clients/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"clients",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /clients/:id (Update Client)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Name\",\n  \"phone\": \"5559876543\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/clients/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"clients",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /clients/:id (Delete Client)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/clients/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"clients",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "CRUD completo de clientes."
+		},
+		{
+			"name": "Cards",
+			"item": [
+				{
+					"name": "POST /cards (Create Card)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 201', function () {",
+									"  pm.response.to.have.status(201);",
+									"});",
+									"var json = pm.response.json();",
+									"if (json && json.id) { pm.environment.set('cardId', json.id); }"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"client_id\": \"{{clientId}}\",\n  \"pan\": \"4111111111111111\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/cards",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"cards"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /cards/:id (Get Card)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/cards/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"cards",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "68e2f25ab8c291e978a06678"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /cards/:id (Delete Card)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/cards/:id (Update Card))",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"bin\": \"511111\",\n  \"last4\": \"3901\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/cards/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"cards",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "68e2f32eb8c291e978a06679"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "CRUD de tarjetas: creación con validación Luhn y actualización solo de bin/last4."
+		},
+		{
+			"name": "Charges",
+			"item": [
+				{
+					"name": "POST /charges (Create Charge)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"if (!pm.environment.get('requestId')) {",
+									"  pm.environment.set('requestId', pm.variables.replaceIn('{{$guid}}'));",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 201', function () {",
+									"  pm.response.to.have.status(201);",
+									"});",
+									"var json = pm.response.json();",
+									"if (json && json.id) { pm.environment.set('chargeId', json.id); }"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"client_id\": \"68e2f224b8c291e978a06677\",\n  \"card_id\": \"68e2f32eb8c291e978a06679\",\n  \"amount\": 1000000,\n  \"request_id\": null\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/charges",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"charges"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET /charges/:client_id (List Charges by Client)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST /charges/:id/refund (Refund Charge)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Cobros simulados, historial e idempotencia por request_id."
+		}
+	]
+}
