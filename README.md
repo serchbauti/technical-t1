@@ -101,13 +101,10 @@ postman/           # Colección Postman exportada
 
 ### Endpoint
 `POST /cards`
-
-| Alias | BIN    | PAN de prueba (Luhn válido) | last4 | Regla aplicada |
-|------:|--------|------------------------------|:-----:|----------------|
-| Card A (OK) | 411111 | 4111111111111111         | 1111 | Aprobado por defecto (si monto ≤ 5000) |
-| Card B (bloqueada) | 424242 | 4242424242420000   | 0000 | **Rechazo** por patrón de PAN (`SUSPECT_PAN`) |
-| Card C (bloqueada) | 410000 | 4100000000059999   | 9999 | **Rechazo** por patrón de PAN (`SUSPECT_PAN`) |
-| Card D (OK) | 555555 | 5555555555554444         | 4444 | Aprobado por defecto (si monto ≤ 5000) |
+| Campo       | Tipo            | Requerido | Validación                                        |
+|:-----------:|-----------------|:---------:|---------------------------------------------------|
+| `client_id` | string          | ✓         | **ObjectId** válido de un **client** existente    |
+| `pan`       | string (PAN)    | ✓         | **12–19 dígitos**, solo numérico, **Luhn válido** |
 
 > Nota: Usa estos PAN **solo** en `POST /cards`. Después, la API trabaja con IDs.
 
@@ -142,6 +139,12 @@ postman/           # Colección Postman exportada
 ---
 
 ## Escenarios de validación
+| Alias | BIN    | PAN de prueba (Luhn válido) | last4 | Regla aplicada |
+|------:|--------|------------------------------|:-----:|----------------|
+| Card A (OK) | 411111 | 4111111111111111         | 1111 | Aprobado por defecto (si monto ≤ 5000) |
+| Card B (bloqueada) | 424242 | 4242424242420000   | 0000 | **Rechazo** por patrón de PAN (`SUSPECT_PAN`) |
+| Card C (bloqueada) | 410000 | 4100000000059999   | 9999 | **Rechazo** por patrón de PAN (`SUSPECT_PAN`) |
+| Card D (OK) | 555555 | 5555555555554444         | 4444 | Aprobado por defecto (si monto ≤ 5000) |
 
 1) **Aprobado por defecto**  
    - **Tarjeta**: *Card A* (`…1111`)  
