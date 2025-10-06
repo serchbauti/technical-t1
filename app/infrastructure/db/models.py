@@ -114,7 +114,11 @@ class ChargeDoc(Document):
         name = "charges"
         indexes = [
             IndexModel([("client_id", 1), ("attempted_at", -1)]),
-            IndexModel([("request_id", 1)], unique=True, sparse=True),
+            IndexModel(
+                [("request_id", 1)],
+                unique=True,
+                partialFilterExpression={"request_id": {"$type": "string"}},
+            ),
         ]
 
     # ---- Mapping helpers

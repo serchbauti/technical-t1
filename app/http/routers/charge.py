@@ -64,31 +64,31 @@ async def create_charge(payload: ChargeCreate) -> ChargeOut:
         if existing:
             # 200 OK to indicate we are returning the already-created resource
             return _to_out(existing)
-
-    # Apply rules
     status_decision, reason_code = apply_rules(card.to_entity(), payload.amount)
-
     now = datetime.now(timezone.utc)
-    doc = ChargeDoc(
-        client_id=ObjectId(payload.client_id),
-        card_id=ObjectId(payload.card_id),
-        amount=payload.amount,
-        attempted_at=now,
-        status=status_decision,
-        reason_code=reason_code,
-        refunded=False,
-        refunded_at=None,
-        request_id=payload.request_id,
-    )
+    doc_data = {
+        "client_id": ObjectId(payload.client_id),
+        "card_id": ObjectId(payload.card_id),
+        "amount": payload.amount,
+        "attempted_at": now,
+        "status": status_decision,
+        "reason_code": reason_code,
+        "refunded": False,
+        "refunded_at": None,
+    }
+    if payload.request_id:
+        doc_data["request_id"] = payload.request_id
+
+    doc = ChargeDoc(**doc_data)
     try:
         await doc.insert()
     except DuplicateKeyError:
         # In case of a race on idempotency key
-        existing = await ChargeDoc.find_one(ChargeDoc.request_id == payload.request_id)
-        if existing:
-            return _to_out(existing)
+        if payload.request_id:
+            existing = await ChargeDoc.find_one(ChargeDoc.request_id == payload.request_id)
+            if existing:
+                return _to_out(existing)
         raise  # re-raise if something else went wrong
-
     return _to_out(doc)
 
 
