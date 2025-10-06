@@ -3,9 +3,9 @@ from __future__ import annotations
 import random
 from typing import Any, Dict, Iterable
 
-from httpx import AsyncClient
+from fastapi.testclient import TestClient
 
-from app.domain.rules.luhn import generate_luhn
+from app.domain.rules.luhn import generate_luhn, is_valid_luhn
 
 
 def _luhn_check_digit(digits: Iterable[int]) -> int:
@@ -29,40 +29,41 @@ def generate_pan_with_last4(last4: str, bin_prefix: str = "411111", length: int 
         raise ValueError("bin_prefix must leave room for body and last4 digits")
 
     body_length = length - len(bin_prefix) - 4
-    while True:
-        body = [random.randint(0, 9) for _ in range(body_length)]
-        digits = [int(c) for c in bin_prefix] + body + [int(last4[0]), int(last4[1]), int(last4[2])]
-        check_digit = _luhn_check_digit(digits)
-        if check_digit == int(last4[3]):
-            digits.append(check_digit)
-            return "".join(str(d) for d in digits)
+    attempts = 0
+    while attempts < 10000:
+        body = ''.join(str(random.randint(0, 9)) for _ in range(body_length))
+        candidate = f"{bin_prefix}{body}{last4}"
+        if is_valid_luhn(candidate):
+            return candidate
+        attempts += 1
+    raise ValueError("could not generate a Luhn-valid PAN with the requested last4")
 
 
 def create_pan(bin_prefix: str = "411111") -> str:
     return generate_luhn(bin_prefix)
 
 
-async def create_client(http_client: AsyncClient, **overrides: Any) -> Dict[str, Any]:
+def create_client(client: TestClient, **overrides: Any) -> Dict[str, Any]:
     payload = {"name": "Test Client", "email": "client@example.com", "phone": "+1000000000"}
     payload.update(overrides)
-    response = await http_client.post("/clients", json=payload)
+    response = client.post("/clients", json=payload)
     response.raise_for_status()
     return response.json()
 
 
-async def create_card(
-    http_client: AsyncClient,
+def create_card(
+    client: TestClient,
     client_id: str,
     pan: str | None = None,
 ) -> Dict[str, Any]:
     card_pan = pan or create_pan()
-    response = await http_client.post("/cards", json={"client_id": client_id, "pan": card_pan})
+    response = client.post("/cards", json={"client_id": client_id, "pan": card_pan})
     response.raise_for_status()
     return response.json()
 
 
-async def create_charge(
-    http_client: AsyncClient,
+def create_charge(
+    client: TestClient,
     client_id: str,
     card_id: str,
     amount: float,
@@ -71,7 +72,6 @@ async def create_charge(
     payload: Dict[str, Any] = {"client_id": client_id, "card_id": card_id, "amount": amount}
     if request_id is not None:
         payload["request_id"] = request_id
-    response = await http_client.post("/charges", json=payload)
+    response = client.post("/charges", json=payload)
     response.raise_for_status()
     return response.json()
-

@@ -1,0 +1,30 @@
+# Caches de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Cachés de herramientas
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.tox/
+.eggs/
+.installed.cfg
+*.egg-info/
+*.egg
+
+# Artefactos de pruebas y cobertura
+.coverage
+coverage.xml
+htmlcov/
+.nox/
+pytest-debug.log
+
+# Cachés de otros entornos
+.cache/
+node_modules/
+
+# Resultados temporales de test
+*.pytest_cache
+*.tmp
+*.log
