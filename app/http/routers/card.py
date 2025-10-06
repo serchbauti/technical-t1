@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException, Response, status
 from bson import ObjectId
 
 from app.infrastructure.db.models import CardDoc, ClientDoc
-from app.http.schemas.card import CardCreate, CardOut
+from app.http.schemas.card import CardCreate, CardOut, CardUpdateMeta
 from app.domain.rules.luhn import is_valid_luhn, mask_pan, derive_bin_last4
 
 router = APIRouter(prefix="/cards", tags=["cards"])
@@ -71,6 +71,41 @@ async def get_card(card_id: str) -> CardOut:
     if not doc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Card not found")
     return _to_out(doc)
+
+
+@router.put("/{card_id}", response_model=CardOut)
+async def update_card_metadata(card_id: str, payload: CardUpdateMeta) -> CardOut:
+    """
+    Update only derived metadata: BIN and last4.
+    We NEVER accept or store the raw PAN on update.
+    Also keep pan_masked consistent with the new last4.
+    """
+    if not ObjectId.is_valid(card_id):
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Invalid card_id")
+
+    doc = await CardDoc.get(ObjectId(card_id))
+    if not doc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Card not found")
+
+    # Update bin & last4 with simple numeric constraints enforced by schema
+    doc.bin = payload.bin
+    doc.last4 = payload.last4
+
+    # Keep masked representation consistent (same length, all masked except last4)
+    masked_len = max(len(doc.pan_masked), 12)  # safety net; create already enforces >=12
+    doc.pan_masked = "*" * (masked_len - 4) + payload.last4
+
+    doc.updated_at = datetime.now(timezone.utc)
+    await doc.save()
+    return CardOut(
+        id=str(doc.id),
+        client_id=str(doc.client_id),
+        pan_masked=doc.pan_masked,
+        last4=doc.last4,
+        bin=doc.bin,
+        created_at=doc.created_at,
+        updated_at=doc.updated_at,
+    )
 
 
 @router.delete(

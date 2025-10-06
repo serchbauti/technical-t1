@@ -9,6 +9,10 @@ class CardCreate(BaseModel):
     client_id: str
     pan: str = Field(min_length=12, max_length=19)
 
+class CardUpdateMeta(BaseModel):
+    """Update only BIN (6 digits) and last4 (4 digits). No raw PAN is ever accepted."""
+    bin: str = Field(pattern=r"^\d{6}$")
+    last4: str = Field(pattern=r"^\d{4}$")
 
 class CardOut(BaseModel):
     """Outbound representation of a stored card (never returns full PAN)."""
