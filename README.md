@@ -83,7 +83,7 @@ postman/           # Colección Postman exportada
 
 ## Escenario de pruebas
 
-## Crear **clients**
+## Crear clientes
 
 ### Endpoint
 `POST /clients`
@@ -97,10 +97,12 @@ postman/           # Colección Postman exportada
 
 > **Nota:** por defecto **no** se fuerza unicidad de `email` a nivel de DB.
 
-## Crear tarjetas de prueba (solo para crear; la API nunca almacena el PAN completo)
+## Crear tarjetas
 
 ### Endpoint
 `POST /cards`
+
+### Request body (schema)
 | Campo       | Tipo            | Requerido | Validación                                        |
 |:-----------:|-----------------|:---------:|---------------------------------------------------|
 | `client_id` | string          | ✓         | **ObjectId** válido de un **client** existente    |
@@ -127,7 +129,7 @@ postman/           # Colección Postman exportada
 **Headers**
 - `Content-Type: application/json`
 
-**Request body (schema)**
+### Request body (schema)
 | Campo        | Tipo    | Req. | Detalle |
 |-------------:|---------|:----:|---------|
 | `client_id`  | string  |  ✓   | ObjectId del cliente existente |
