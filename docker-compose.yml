@@ -3,6 +3,8 @@ services:
     build: .
     env_file:
       - .env
+    environment:
+      - TEST_MONGODB_URI=mongodb://mongo:27017/t1db_test
     ports:
       - "8000:8000"
     depends_on:

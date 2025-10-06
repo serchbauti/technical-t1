@@ -14,8 +14,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends build-essential
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Code
+# Code and tests
 COPY app ./app
+COPY tests ./tests
+COPY pytest.ini ./pytest.ini
+
+COPY scripts ./scripts
+RUN chmod +x scripts/wait_for_mongo.py
 
 # Non-root user
 RUN useradd -m appuser && chown -R appuser /app
